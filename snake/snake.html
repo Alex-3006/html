@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="snake.js" defer></script>
+      <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      canvas {
+        border: 1px solid white;
+      }
+
+      .score{
+        color: white;
+        width: 10rem;
+        height: 2rem;
+      }
+      </style>
+    </head>
+    <body>
+        <h1>Snake - Das Spiel</h1>
+        <canvas width="400" height="400" id="game"></canvas>
+        <br><br>
+        <h2 id="score" class="score"></h2>
+    </body>
+</html>

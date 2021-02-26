@@ -1,0 +1,28 @@
+@font-face {
+	font-family: ubuntu;
+	src: url(Ubuntu-R.ttf);
+}
+
+#div1 {
+	width: 200%;
+	border-radius: 50px;
+	border-style: solid;
+	padding: 100px;
+	box-shadow: 10px 10px 7px #AAA;
+	font-family: ubuntu;
+}
+
+@media screen and (min-width:700px) {
+	body {
+		background-color: silver;
+	}
+}
+@media screen and (orientation: landscape) {
+	body {
+		width: 25%;
+	}
+}
+
+p {
+	color: blue;
+}
