@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 // import React, { useState } from 'react';
 import './App.css';
-import Person from '../components/Persons/Person/Person';
+import Persons from '../components/Persons/Persons';
 // import Radium, { StyleRoot } from 'radium';
 // import styled from 'styled-components'
+import Cockpit from '../components/Cockpit/Cockpit'
+import AuthContext from '../context/auth-context'
 
 // const StyledButton = styled.button`
 //     background-color: green,
@@ -20,6 +22,21 @@ import Person from '../components/Persons/Person/Person';
 // `;
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+        console.log('[App.js] constructor');
+        // this.state = {
+        //     persons: [
+        //         { id: '1', name: 'Max', age: 28 },
+        //         { id: '2', name: 'Manu', age: 29 },
+        //         { id: '3', name: 'Stephanie', age: 27 }
+        //     ],
+
+        //     otherState: 'some other value',
+        //     showPersons: false
+        // }
+    }
+
     state = {
         persons: [
             { id: '1', name: 'Max', age: 28 },
@@ -28,7 +45,37 @@ class App extends Component {
         ],
 
         otherState: 'some other value',
-        showPersons: false
+        showPersons: false,
+        showCockpit: true,
+        changeCounter: 0,
+        authenticated: false
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        console.log('[App.js] getDerivedStateFromProps', props);
+        return state;
+    }
+
+    componentDidMount() {
+        console.log('[App.js] componentDidMount');
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        console.log('[App.js] shouldComponentUpdate');
+        return true;
+    }
+
+    getSnapshotBeforeUpdate(prevProps, prevState) {
+        console.log('[App.js] getSnapshotBeforeUpdate');
+        return { message: 'Snapshot!' };
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        console.log('[App.js] componentDidUpdate');
+        console.log(snapshot);
+    }
+    componentWillUnmount() {
+        console.log('[App.js] componentWillUnmount');
     }
 
     // switchNameHandler = (newName) => {
@@ -60,7 +107,12 @@ class App extends Component {
         const persons = [...this.state.persons];
         person[personIndex] = person;
 
-        this.setState({ persons: persons })
+        // this.setState({ persons: persons, changeCounter: this.state.changeCounter + 1})
+        this.setState((prevState, props) => {
+            return {
+                persons: persons, changeCounter: this.state.changeCounter + 1
+            }
+        })
 
         // this.setState({
         //     persons: [
@@ -84,7 +136,12 @@ class App extends Component {
         this.setState({ showPersons: !doesShow });
     }
 
+    loginHandler = () => {
+        this.setState({ authenticated: true });
+    };
+
     render() {
+        console.log('[App.js] render');
         // return (
         //     <div className="App">
         //         <h1>Hi, I'm a React app</h1>
@@ -115,9 +172,14 @@ class App extends Component {
                 //     <Person name={this.state.persons[2].name} age={this.state.persons[2].age} />
                 // </div>
                 <div>
-                    {this.state.persons.map((person, index) => {
+                    {/* {this.state.persons.map((person, index) => {
                         return <Person click={() => this.deletePersonHandler(index)} name={person.name} age={person.age} key={person.id} changed={(event) => this.nameChangedHandler(event, person.id)} />
-                    })}
+                    })} */}
+                    <Persons
+                        persons={this.state.persons}
+                        clicked={this.deletePersonHandler}
+                        changed={this.nameChangedHandler}
+                        isAuthenticated={this.state.authenticated} />
                 </div>
             )
             // style.backgroundColor = 'red'
@@ -134,14 +196,14 @@ class App extends Component {
         return (
             // <StyleRoot>
             <div className="App" >
-                <h1>Hi, I'm a React app</h1>
-                <p>This is really working!</p>
+                {/* <h1>Hi, I'm a React app</h1> */}
+                {/* <p>This is really working!</p> */}
                 {/* <p className={classes.join(' ')}>This is really working!</p> */}
                 {/* <button onClick={this.switchNameHandler()}>Switch Name</button> */}
                 {/* <button onClick={this.switchNameHandler.bind(this, 'Maximilian')}>Switch Name</button> */}
                 {/* <button style={style} onClick={() => this.switchNameHandler('Maximilian!!')}>Switch Name</button> */}
                 {/* <button style={style} onClick={() => this.togglePersonHandler()}> Toogle Persons</button > */}
-                <button onClick={() => this.togglePersonHandler()} className='button'> Toogle Persons</button >
+                {/* <button onClick={() => this.togglePersonHandler()} className='button'> Toogle Persons</button > */}
                 {/* <StyledButton onClick={() => this.togglePersonHandler()}> Toogle Persons</StyledButton> */}
                 {/* <Person /> */}
                 {/* <Person name="Max" age="28"/>
@@ -159,7 +221,18 @@ class App extends Component {
                             <Person name={this.state.persons[2].name} age={this.state.persons[2].age} />
                         </div> : null
                 } */}
-                {persons}
+                <button onClick={() => { this.setState({ showCockpit: false }) }}>Remove Cockpit</button>
+                <AuthContext.Provider value={{ authenticated: this.state.authenticated, login: this.loginHandler }}>
+                    {this.state.showCockpit ? (
+                        <Cockpit
+                            title={this.props.appTitle}
+                            showPersons={this.state.showPersons}
+                            persons={this.state.persons}
+                            clicked={this.togglePersonHandler}
+                        />
+                    ) : null}
+                    {persons}
+                </AuthContext.Provider>
             </div >
             // </StyleRoot>
         );
